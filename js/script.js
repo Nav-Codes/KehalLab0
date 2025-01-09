@@ -1,11 +1,13 @@
 // Box class idea given by ChatGPT
 class Box {
     #boxElement = document.createElement("button")
+    
     constructor(num) {
         this.#boxElement.classList.add("box")
         this.#boxElement.style.backgroundColor = this.getRandomColor()
         this.#boxElement.disabled = true;
-        
+        this.#boxElement.value = num
+
         let btnText = document.createElement("p")
         btnText.style.color = "black"
         btnText.innerHTML = num
@@ -40,17 +42,8 @@ class Box {
 class BoxManager {
     #boxArr = []
 
-    checkNumOfBoxes() {
-        let numBoxes = document.getElementById("numOfBoxes").value
-        if (numBoxes > maxBoxes || numBoxes < minBoxes || numBoxes == null) {
-            document.getElementById("errorMessage").innerHTML = invalidNumBoxesMsg
-        } else {
-            document.getElementById("memoryGame").innerHTML = ""
-            this.generateBoxes(numBoxes)
-        }
-    }
-
     generateBoxes(numBoxes) {
+        document.getElementById("memoryGame").innerHTML = ""
         let gameArea = document.createElement("div")
         gameArea.id = "gameArea"
         document.getElementById("memoryGame").insertAdjacentElement("beforeend", gameArea)
@@ -64,7 +57,7 @@ class BoxManager {
     sleep(ms) {
         return new Promise(resolve => setTimeout(resolve, ms));
     }
-    
+
     async shuffleBoxes() {
         //wait numBoxes seconds
         await this.sleep(this.#boxArr.length * 1000 - 2000)
@@ -82,22 +75,38 @@ class BoxManager {
         for (let i = 0; i < this.#boxArr.length; i++) {
             this.#boxArr.at(i).getBoxElement().disabled = false
         }
-
     }
 }
 
 // MemoryGame class idea given by ChatGPT
 class MemoryGame {
     #boxManager = new BoxManager()
-    initializeGame() {
+    #currentClick = 1
+    runGame() {
         this.createStartingElements()
-        // console.log(initialMsg)
         document.getElementById("initialMessage").innerHTML = initialMsg
         document.getElementById("goButton").addEventListener("click", () => {
-            this.#boxManager.checkNumOfBoxes()
-            this.#boxManager.shuffleBoxes()
+            if (this.checkNumBoxes()) {
+                this.#boxManager.generateBoxes(document.getElementById("numOfBoxes").value)
+                this.#boxManager.shuffleBoxes()
+                let gameMsg = document.createElement("p")
+                gameMsg.id = "gameMessage"
+                document.getElementById("memoryGame").insertAdjacentElement("afterbegin", gameMsg)
+                this.checkClickOrder()
+            }
         })
     }
+
+    checkNumBoxes() {
+        let numBoxes = document.getElementById("numOfBoxes").value
+        if (numBoxes > maxBoxes || numBoxes < minBoxes || numBoxes == null) {
+            document.getElementById("errorMessage").innerHTML = invalidNumBoxesMsg
+            return false
+        } else {
+            return true
+        }
+    }
+
     createStartingElements() {
         let initialMsg = document.createElement("p")
         initialMsg.id = "initialMessage"
@@ -118,7 +127,36 @@ class MemoryGame {
         document.getElementById("memoryGame").insertAdjacentElement("beforeend", goBtn)
         document.getElementById("memoryGame").insertAdjacentElement("beforeend", errorMsg)
     }
+
+    checkClickOrder() {
+        document.querySelectorAll(".box").forEach((currentElement, currentIndex, listObj) => {
+            currentElement.addEventListener("click", () => {
+                if (currentElement.value == this.#currentClick) {
+                    //right, display this number
+                    this.#currentClick++
+                    currentElement.innerHTML = currentElement.value
+                } else {
+                    //wrong, display everything
+                    this.displayLose()
+                }
+                if (this.#currentClick - 1 == document.querySelectorAll(".box").length) {
+                    this.displayWin()
+                }
+            })
+        })
+    }
+
+    displayLose() {
+        document.querySelectorAll(".box").forEach((currentElement, currentIndex, listObj) => {
+            currentElement.innerHTML = currentElement.value
+        })
+        document.getElementById("gameMessage").innerHTML = loseMsg
+    }
+
+    displayWin() {
+        document.getElementById("gameMessage").innerHTML = winMsg
+    }
 }
 
 const memoryGame = new MemoryGame()
-memoryGame.initializeGame()
+memoryGame.runGame()
