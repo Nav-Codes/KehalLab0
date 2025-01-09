@@ -1,13 +1,7 @@
-/* generatred by ChatGPT and modified by Navjot */
+/* generatred by ChatGPT and modified */
 .box {
-    display: flex;
     width: 10em;
     height: 5em;
     align-items: center;
     justify-content: center;
-}
-
-#gameArea {
-    display: flex;
-    flex-direction: row;
 }
