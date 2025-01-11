@@ -42,15 +42,16 @@ class Box {
 // BoxManager class idea given by ChatGPT
 class BoxManager {
     #boxArr = []
+    static get GAME_AREA_ID() {return "gameArea"}
 
     generateBoxes(numBoxes) {
         document.getElementById("memoryGame").innerHTML = ""
         let gameArea = document.createElement("div")
-        gameArea.id = gameAreaId
+        gameArea.id = BoxManager.GAME_AREA_ID
         document.getElementById("memoryGame").insertAdjacentElement("beforeend", gameArea)
         for (let i = 1; i <= numBoxes; i++) {
             this.#boxArr.push(new Box(i))
-            document.getElementById(gameAreaId).insertAdjacentElement("beforeend", this.#boxArr.at(i - 1).getBoxElement())
+            document.getElementById(BoxManager.GAME_AREA_ID).insertAdjacentElement("beforeend", this.#boxArr.at(i - 1).getBoxElement())
         }
     }
 
@@ -76,21 +77,27 @@ class BoxManager {
 
 // MemoryGame class idea given by ChatGPT
 class MemoryGame {
+    static get INITIAL_MSG_ID() {return "initialMessage"}
+    static get NUM_INPUT_ID() {return "numOfBoxes"}
+    static get GO_BTN_ID() {return "goButton"}
+    static get ERROR_MSG_ID() {return "errorMessage"}
+    static get GAME_MSG_ID() {return "gameMessage"}
+    
     #boxManager = new BoxManager()
     #currentClick = 1
     
     runGame() {
         this.createStartingElements()
         
-        document.getElementById("initialMessage").innerHTML = initialMsg
+        document.getElementById("initialMessage").innerHTML = INITIAL_MSG
         
-        document.getElementById(goBtnId).addEventListener("click", () => {
+        document.getElementById(MemoryGame.GO_BTN_ID).addEventListener("click", () => {
             if (this.checkNumBoxes()) {
-                this.#boxManager.generateBoxes(document.getElementById(numInputId).value)
+                this.#boxManager.generateBoxes(document.getElementById(MemoryGame.NUM_INPUT_ID).value)
                 this.#boxManager.shuffleBoxes()
                 
                 let gameMsg = document.createElement("p")
-                gameMsg.id = gameMsgId
+                gameMsg.id = MemoryGame.GAME_MSG_ID
                 document.getElementById("memoryGame").insertAdjacentElement("afterbegin", gameMsg)
                 
                 this.checkClickOrder()
@@ -99,9 +106,9 @@ class MemoryGame {
     }
 
     checkNumBoxes() {
-        let numBoxes = document.getElementById(numInputId).value
-        if (numBoxes > maxBoxes || numBoxes < minBoxes || numBoxes == null) {
-            document.getElementById(errorMsgId).innerHTML = invalidNumBoxesMsg
+        let numBoxes = document.getElementById(MemoryGame.NUM_INPUT_ID).value
+        if (numBoxes > MAX_BOXES || numBoxes < MIN_BOXES || numBoxes == null) {
+            document.getElementById(MemoryGame.ERROR_MSG_ID).innerHTML = INVALID_NUM_BOXES_MSG
             return false
         } else {
             return true
@@ -112,18 +119,18 @@ class MemoryGame {
         document.getElementById("memoryGame").innerHTML = ""
 
         let initialMsg = document.createElement("p")
-        initialMsg.id = initialMsgId
+        initialMsg.id = MemoryGame.INITIAL_MSG_ID
 
         let numInput = document.createElement("input")
         numInput.type = "number"
-        numInput.id = numInputId
+        numInput.id = MemoryGame.NUM_INPUT_ID
 
         let goBtn = document.createElement("button")
-        goBtn.id = goBtnId
+        goBtn.id = MemoryGame.GO_BTN_ID
         goBtn.innerHTML = "Go!"
 
         let errorMsg = document.createElement("div")
-        errorMsg.id = errorMsgId
+        errorMsg.id = MemoryGame.ERROR_MSG_ID
 
         document.getElementById("memoryGame").insertAdjacentElement("beforeend", initialMsg)
         document.getElementById("memoryGame").insertAdjacentElement("beforeend", numInput)
@@ -152,12 +159,12 @@ class MemoryGame {
         document.querySelectorAll(".box").forEach((currentElement, currentIndex, listObj) => {
             currentElement.innerHTML = currentElement.value
         })
-        document.getElementById(gameMsgId).innerHTML = loseMsg
+        document.getElementById(MemoryGame.GAME_MSG_ID).innerHTML = LOSE_MSG
         this.restartGame()
     }
 
     displayWin() {
-        document.getElementById(gameMsgId).innerHTML = winMsg
+        document.getElementById(MemoryGame.GAME_MSG_ID).innerHTML = WIN_MSG
         this.restartGame()
     }
 

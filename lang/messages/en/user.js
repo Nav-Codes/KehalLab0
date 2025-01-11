@@ -1,13 +1,6 @@
-const minBoxes = 3
-const maxBoxes = 7
-const initialMsg = "How many buttons to create?"
-const invalidNumBoxesMsg = "Invalid number of boxes. Number of boxes must be between " + minBoxes + " and " +  maxBoxes + "."
-const winMsg = "Excellent memory!"
-const loseMsg = "Wrong order!"
-
-const initialMsgId = "initialMessage"
-const numInputId = "numOfBoxes"
-const goBtnId = "goButton"
-const errorMsgId = "errorMessage"
-const gameAreaId = "gameArea"
-const gameMsgId = "gameMessage"
+const MIN_BOXES = 3
+const MAX_BOXES = 7
+const INITIAL_MSG = "How many buttons to create?"
+const INVALID_NUM_BOXES_MSG = "Invalid number of boxes. Number of boxes must be between " + MIN_BOXES + " and " +  MAX_BOXES + "."
+const WIN_MSG = "Excellent memory!"
+const LOSE_MSG = "Wrong order!"
